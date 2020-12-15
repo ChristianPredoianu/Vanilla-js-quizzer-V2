@@ -155,7 +155,7 @@ body {
   }
 }
 
-.progress-bar {
+/* .progress-bar {
   display: none;
   align-items: center;
   width: 50%;
@@ -171,6 +171,11 @@ body {
     background-color: #f3ac08;
     border-radius: 2rem 1rem 1rem 2rem;
   }
+} */
+
+.countdown {
+  color: white;
+  font-size: 5rem;
 }
 
 .correct-answer {

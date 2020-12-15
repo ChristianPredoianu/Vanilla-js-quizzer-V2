@@ -2,7 +2,7 @@ const selectCategories = document.querySelector('#category'),
   selectDifficulty = document.querySelector('#difficulty'),
   containerCta = document.querySelector('.container-cta'),
   glowSign = document.querySelector('.glow-sign'),
-  progressBar = document.querySelector('.progress-bar'),
+  countdownDiv = document.querySelector('.countdown'),
   quizContainer = document.querySelector('.container-quiz'),
   question = document.querySelector('.quiz__question'),
   answersList = document.querySelector('.quiz__list');
@@ -18,19 +18,14 @@ export function populateDropdown(data) {
   });
 }
 
-export function getCategoryAndDifficulty() {
-  const categoryId = selectCategories.value;
-  const difficulty = selectDifficulty.value;
-  return {
-    id: categoryId,
-    diff: difficulty,
-  };
-}
+export const getCategoryAndDifficulty = {
+  id: selectCategories.value,
+  diff: selectDifficulty.value,
+};
 
 export function playGameUi() {
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
-  progressBar.style.display = 'flex';
   quizContainer.style.display = 'flex';
 }
 
@@ -63,15 +58,21 @@ export function checkIfCorrectAnswer(data, currentQuestion) {
     li.addEventListener('click', (e) => {
       console.log(e.target);
       console.log(data.results[currentQuestion].correct_answer);
+
       if (
         e.target.textContent === data.results[currentQuestion].correct_answer
       ) {
         e.target.classList.add('correct-answer');
         e.target.parentElement.classList.add('disabled');
+        document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+      }
+      if (countdownDiv.textContent === '0') {
+        showCorrectAnswer(data, currentQuestion);
       } else {
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
         showCorrectAnswer(data, currentQuestion);
+        document.querySelector('.quiz__nextBtn').classList.remove('disabled');
       }
     });
   });
@@ -90,4 +91,19 @@ export function removeAnswers() {
     li.remove();
   });
   answersList.classList.remove('disabled');
+}
+
+export function countdown(data, currentQuestion) {
+  let counter = 10;
+  setInterval(function () {
+    counter--;
+
+    if (counter >= 0) {
+      countdownDiv.textContent = counter;
+    }
+    if (counter === 0) {
+      showCorrectAnswer(data, currentQuestion);
+      document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+    }
+  }, 1000);
 }
