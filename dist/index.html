@@ -1,1 +1,42 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Document</title><link rel="stylesheet" href="/main.060ccfa6.css"></head><body> <h1>header</h1> <h1>dsa</h1> <script src="/main.80d453ba.js" defer=""></script> </body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizzer V2</title>
+  <link rel="stylesheet" href="/main.fb6bbcaf.css"></head>
+  <body>
+    <div class="overlay">
+      <div class="progress-bar">
+        <div class="progress-bar__bar"></div>
+      </div>
+      <div class="glow-sign">
+        <span class="glow-sign__span">trivia</span>
+        <span class="glow-sign__span">quizzer</span>
+        <span class="glow-sign__span">wars</span>
+      </div>
+      <div class="container-cta">
+        <form class="form">
+          <label for="Category" class="form__label">Choose a category:</label>
+          <select name="category" id="category" class="form__select"></select>
+          <label for="Category" class="form__label">Choose difficulty:</label>
+          <select name="difficulty" id="difficulty" class="form__select">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </form>
+        <button class="btn">Start Quiz</button>
+      </div>
+      <div class="container-quiz">
+        <div class="quiz">
+          <p class="quiz__category">Vehciles</p>
+          <p class="quiz__question"></p>
+          <ul class="quiz__list"></ul>
+          <button class="quiz__nextBtn">Next question</button>
+        </div>
+      </div>
+    </div>
+    <script src="/main.fb6bbcaf.js" defer=""></script>
+  </body>
+</html>
