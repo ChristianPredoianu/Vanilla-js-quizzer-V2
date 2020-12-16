@@ -7,10 +7,9 @@
   </head>
   <body>
     <div class="overlay">
-      <!--  <div class="progress-bar">
-        <div class="progress-bar__bar"></div>
-      </div> -->
-      <div class="countdown"></div>
+      <div class="countdown">
+        <div class="countdown__count"></div>
+      </div>
       <div class="glow-sign">
         <span class="glow-sign__span">trivia</span>
         <span class="glow-sign__span">quizzer</span>
@@ -33,8 +32,14 @@
         <div class="quiz">
           <p class="quiz__category">Vehciles</p>
           <p class="quiz__question"></p>
+          <div class="quiz__loader">Loading...</div>
           <ul class="quiz__list"></ul>
           <button class="quiz__nextBtn disabled">Next question</button>
+        </div>
+        <div class="game-over">
+          <p class="game-over__paragraph">The game is over! Your score is:</p>
+          <p class="game-over__score"></p>
+          <button class="game-over__btn">Play Again?</button>
         </div>
       </div>
     </div>

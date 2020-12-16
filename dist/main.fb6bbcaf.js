@@ -986,19 +986,19 @@ function _getCategories() {
   return _getCategories.apply(this, arguments);
 }
 
-function getQuestions(_x, _x2) {
+function getQuestions(_x) {
   return _getQuestions.apply(this, arguments);
 }
 
 function _getQuestions() {
-  _getQuestions = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(category, diff) {
+  _getQuestions = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(options) {
     var response, questions;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return fetch("https://opentdb.com/api.php?amount=10&category=".concat(category, "&difficulty=").concat(diff, "&type=multiple"));
+            return fetch("https://opentdb.com/api.php?amount=10&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple"));
 
           case 2:
             response = _context2.sent;
@@ -1025,25 +1025,29 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.populateDropdown = populateDropdown;
-exports.playGameUi = playGameUi;
+exports.getCategoryAndDifficulty = getCategoryAndDifficulty;
+exports.initGameUi = initGameUi;
 exports.showQuestion = showQuestion;
 exports.showAnswers = showAnswers;
 exports.shuffleAnswers = shuffleAnswers;
 exports.checkIfCorrectAnswer = checkIfCorrectAnswer;
-exports.removeAnswers = removeAnswers;
+exports.removeQuestion = removeQuestion;
 exports.countdown = countdown;
-exports.getCategoryAndDifficulty = void 0;
+exports.gameOver = gameOver;
+exports.showPlayersScore = showPlayersScore;
 var selectCategories = document.querySelector('#category'),
     selectDifficulty = document.querySelector('#difficulty'),
     containerCta = document.querySelector('.container-cta'),
     glowSign = document.querySelector('.glow-sign'),
-    countdownDiv = document.querySelector('.countdown'),
     quizContainer = document.querySelector('.container-quiz'),
+    quizCategory = document.querySelector('.quiz__category'),
+    loader = document.querySelector('.quiz__loader'),
     question = document.querySelector('.quiz__question'),
-    answersList = document.querySelector('.quiz__list'); //Populate dropdown with categories from API
+    count = document.querySelector('.countdown__count'),
+    answersList = document.querySelector('.quiz__list');
+var points = 0; //Populate dropdown with categories from API
 
 function populateDropdown(data) {
-  console.log(selectCategories);
   data.trivia_categories.forEach(function (category) {
     var option = document.createElement('option');
     option.value = category.id;
@@ -1052,24 +1056,28 @@ function populateDropdown(data) {
   });
 }
 
-var getCategoryAndDifficulty = {
-  id: selectCategories.value,
-  diff: selectDifficulty.value
-};
-exports.getCategoryAndDifficulty = getCategoryAndDifficulty;
+function getCategoryAndDifficulty() {
+  return {
+    id: selectCategories.value,
+    diff: selectDifficulty.value
+  };
+}
 
-function playGameUi() {
+function initGameUi() {
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
   quizContainer.style.display = 'flex';
+  document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
 
 function showQuestion(data, currentQuestion) {
+  loader.style.display = 'none';
+  document.querySelector('.quiz__nextBtn').style.display = 'block';
+  quizCategory.textContent = selectCategories.options[selectCategories.selectedIndex].text;
   question.textContent = data.results[currentQuestion].question;
 }
 
 function showAnswers(data, currentQuestion) {
-  console.log(data.results[currentQuestion].incorrect_answers);
   var answer = document.createElement('li');
   answer.classList.add('quiz__list-item');
   answersList.appendChild(answer);
@@ -1091,17 +1099,11 @@ function shuffleAnswers() {
 function checkIfCorrectAnswer(data, currentQuestion) {
   document.querySelectorAll('li').forEach(function (li) {
     li.addEventListener('click', function (e) {
-      console.log(e.target);
-      console.log(data.results[currentQuestion].correct_answer);
-
       if (e.target.textContent === data.results[currentQuestion].correct_answer) {
         e.target.classList.add('correct-answer');
         e.target.parentElement.classList.add('disabled');
         document.querySelector('.quiz__nextBtn').classList.remove('disabled');
-      }
-
-      if (countdownDiv.textContent === '0') {
-        showCorrectAnswer(data, currentQuestion);
+        points++;
       } else {
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
@@ -1120,27 +1122,58 @@ function showCorrectAnswer(data, currentQuestion) {
   });
 }
 
-function removeAnswers() {
+function removeQuestion() {
+  loader.style.display = 'block';
+  question.textContent = '';
   document.querySelectorAll('li').forEach(function (li) {
     li.remove();
   });
   answersList.classList.remove('disabled');
+  document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
 
 function countdown(data, currentQuestion) {
-  var counter = 10;
-  setInterval(function () {
+  var counter = 16;
+  count.style.color = '#02ff17';
+  var timer = setInterval(function () {
     counter--;
 
+    if (counter <= 5) {
+      count.style.color = '#ff0202';
+    }
+
     if (counter >= 0) {
-      countdownDiv.textContent = counter;
+      count.textContent = counter;
+      document.querySelectorAll('li').forEach(function (li) {
+        li.addEventListener('click', function (e) {
+          clearInterval(timer);
+        });
+      });
     }
 
     if (counter === 0) {
       showCorrectAnswer(data, currentQuestion);
+      document.querySelectorAll('li').forEach(function (li) {
+        li.classList.add('disabled');
+      });
       document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+      clearInterval(timer);
     }
   }, 1000);
+}
+
+function gameOver() {
+  quizCategory.style.display = 'none';
+  question.style.display = 'none';
+  answersList.style.display = 'none';
+  count.style.display = 'none';
+  document.querySelector('.quiz__nextBtn').style.display = 'none';
+  document.querySelector('.quiz').style.display = 'none';
+  document.querySelector('.game-over').style.display = 'flex';
+}
+
+function showPlayersScore() {
+  document.querySelector('.game-over__score').textContent = points;
 }
 },{}],"js/main.js":[function(require,module,exports) {
 "use strict";
@@ -1159,18 +1192,12 @@ function initGame() {
   (0, _openTrivia.getCategories)().then(function (data) {
     (0, _ui.populateDropdown)(data);
   });
-}
-
-function playGame() {
   document.querySelector('.btn').addEventListener('click', function () {
-    (0, _ui.playGameUi)();
-    (0, _openTrivia.getQuestions)(_ui.getCategoryAndDifficulty.id, _ui.getCategoryAndDifficulty.diff).then(function (data) {
+    var selectedOptions = (0, _ui.getCategoryAndDifficulty)();
+    (0, _ui.initGameUi)();
+    (0, _openTrivia.getQuestions)(selectedOptions).then(function (data) {
       console.log(data);
-      (0, _ui.showQuestion)(data, currentQuestion);
-      (0, _ui.showAnswers)(data, currentQuestion);
-      (0, _ui.shuffleAnswers)();
-      (0, _ui.countdown)(data, currentQuestion);
-      (0, _ui.checkIfCorrectAnswer)(data, currentQuestion);
+      playGame(data, currentQuestion);
       nextQuestion(data);
     });
   });
@@ -1182,20 +1209,26 @@ function nextQuestion(data) {
 
     if (data.results.length - 1 !== currentQuestion) {
       currentQuestion++;
-      (0, _ui.removeAnswers)();
-      (0, _ui.showQuestion)(data, currentQuestion);
-      (0, _ui.showAnswers)(data, currentQuestion);
-      (0, _ui.shuffleAnswers)();
-      (0, _ui.countdown)(data, currentQuestion);
-      (0, _ui.checkIfCorrectAnswer)(data, currentQuestion);
+      (0, _ui.removeQuestion)();
+      playGame(data, currentQuestion);
     } else {
-      console.log('game is over');
+      (0, _ui.gameOver)();
+      (0, _ui.showPlayersScore)();
     }
   });
 }
 
+function playGame(data, currentQuestion) {
+  (0, _ui.countdown)(data, currentQuestion);
+  setTimeout(function () {
+    (0, _ui.showQuestion)(data, currentQuestion);
+    (0, _ui.showAnswers)(data, currentQuestion);
+    (0, _ui.shuffleAnswers)();
+    (0, _ui.checkIfCorrectAnswer)(data, currentQuestion);
+  }, 1200);
+}
+
 initGame();
-playGame();
 },{"./../scss/main.scss":"scss/main.scss","regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","./openTrivia":"js/openTrivia.js","./ui":"js/ui.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -1224,7 +1257,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50872" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50709" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
