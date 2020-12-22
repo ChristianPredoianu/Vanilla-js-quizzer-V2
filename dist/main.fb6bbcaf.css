@@ -37,7 +37,7 @@ body {
 }
 .glow-sign__span {
   font-size: 6rem;
-  color: #b2b2b0;
+  color: #aaaaaa;
   animation: glow 0.08s ease-in-out infinite alternate;
 }
 
@@ -251,7 +251,7 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
-.game-over__btn__focus {
+.game-over__btn:focus {
   outline: none;
 }
 .game-over__btn:hover {

@@ -998,7 +998,7 @@ function _getQuestions() {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return fetch("https://opentdb.com/api.php?amount=10&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple"));
+            return fetch("https://opentdb.com/api.php?amount=3&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple"));
 
           case 2:
             response = _context2.sent;
@@ -1035,6 +1035,7 @@ exports.removeQuestion = removeQuestion;
 exports.countdown = countdown;
 exports.gameOver = gameOver;
 exports.showPlayersScore = showPlayersScore;
+exports.resetUi = resetUi;
 var selectCategories = document.querySelector('#category'),
     selectDifficulty = document.querySelector('#difficulty'),
     containerCta = document.querySelector('.container-cta'),
@@ -1054,7 +1055,8 @@ function populateDropdown(data) {
     option.textContent = category.name;
     selectCategories.appendChild(option);
   });
-}
+} //Get categories and difficulty from option values
+
 
 function getCategoryAndDifficulty() {
   return {
@@ -1064,9 +1066,10 @@ function getCategoryAndDifficulty() {
 }
 
 function initGameUi() {
+  quizContainer.style.display = 'flex';
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
-  quizContainer.style.display = 'flex';
+  document.querySelector('.quiz').style.display = 'flex';
   document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
 
@@ -1097,6 +1100,7 @@ function shuffleAnswers() {
 }
 
 function checkIfCorrectAnswer(data, currentQuestion) {
+  console.log('current question' + currentQuestion);
   document.querySelectorAll('li').forEach(function (li) {
     li.addEventListener('click', function (e) {
       if (e.target.textContent === data.results[currentQuestion].correct_answer) {
@@ -1163,10 +1167,13 @@ function countdown(data, currentQuestion) {
 }
 
 function gameOver() {
-  quizCategory.style.display = 'none';
+  document.querySelector('.quiz').style.display = 'none';
+  count.style.display = 'none';
+  /* quizCategory.style.display = 'none';
   question.style.display = 'none';
   answersList.style.display = 'none';
-  count.style.display = 'none';
+  count.style.display = 'none'; */
+
   document.querySelector('.quiz__nextBtn').style.display = 'none';
   document.querySelector('.quiz').style.display = 'none';
   document.querySelector('.game-over').style.display = 'flex';
@@ -1174,6 +1181,14 @@ function gameOver() {
 
 function showPlayersScore() {
   document.querySelector('.game-over__score').textContent = points;
+}
+
+function resetUi() {
+  document.querySelector('.game-over').style.display = 'none';
+  quizContainer.style.display = 'none';
+  containerCta.style.display = 'block';
+  glowSign.style.display = 'flex';
+  points = 0;
 }
 },{}],"js/main.js":[function(require,module,exports) {
 "use strict";
@@ -1187,12 +1202,14 @@ var _openTrivia = require("./openTrivia");
 var _ui = require("./ui");
 
 var currentQuestion = 0;
+var gameIsPlaying = false;
 
 function initGame() {
   (0, _openTrivia.getCategories)().then(function (data) {
     (0, _ui.populateDropdown)(data);
   });
   document.querySelector('.btn').addEventListener('click', function () {
+    gameIsPlaying = true;
     var selectedOptions = (0, _ui.getCategoryAndDifficulty)();
     (0, _ui.initGameUi)();
     (0, _openTrivia.getQuestions)(selectedOptions).then(function (data) {
@@ -1202,18 +1219,25 @@ function initGame() {
     });
   });
 }
+/* Next question -- Use function handler() on addEventListener instead of () => to have access to the this keyword 
+so that we can run the eventListener once (remove the eventListener when the game is over) -- otherwise it will run 
+twice or more when resetting the game depending on how many game resets
+*/
+
 
 function nextQuestion(data) {
-  document.querySelector('.quiz__nextBtn').addEventListener('click', function () {
+  document.querySelector('.quiz__nextBtn').addEventListener('click', function handler() {
     document.querySelector('.quiz__nextBtn').classList.add('disabled');
 
     if (data.results.length - 1 !== currentQuestion) {
       currentQuestion++;
       (0, _ui.removeQuestion)();
       playGame(data, currentQuestion);
+      console.log('data-length' + data.results.length);
     } else {
       (0, _ui.gameOver)();
       (0, _ui.showPlayersScore)();
+      this.removeEventListener('click', handler);
     }
   });
 }
@@ -1228,7 +1252,16 @@ function playGame(data, currentQuestion) {
   }, 1200);
 }
 
+function resetGame() {
+  document.querySelector('.game-over__btn').addEventListener('click', function () {
+    currentQuestion = 0;
+    (0, _ui.removeQuestion)();
+    (0, _ui.resetUi)();
+  });
+}
+
 initGame();
+resetGame();
 },{"./../scss/main.scss":"scss/main.scss","regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","./openTrivia":"js/openTrivia.js","./ui":"js/ui.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -1257,7 +1290,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50709" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51391" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

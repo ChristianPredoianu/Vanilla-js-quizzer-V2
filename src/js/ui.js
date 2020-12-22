@@ -21,6 +21,7 @@ export function populateDropdown(data) {
   });
 }
 
+//Get categories and difficulty from option values
 export function getCategoryAndDifficulty() {
   return {
     id: selectCategories.value,
@@ -29,9 +30,10 @@ export function getCategoryAndDifficulty() {
 }
 
 export function initGameUi() {
+  quizContainer.style.display = 'flex';
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
-  quizContainer.style.display = 'flex';
+  document.querySelector('.quiz').style.display = 'flex';
   document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
 
@@ -63,6 +65,7 @@ export function shuffleAnswers() {
 }
 
 export function checkIfCorrectAnswer(data, currentQuestion) {
+  console.log('current question' + currentQuestion);
   document.querySelectorAll('li').forEach((li) => {
     li.addEventListener('click', (e) => {
       if (
@@ -109,6 +112,7 @@ export function countdown(data, currentQuestion) {
     if (counter <= 5) {
       count.style.color = '#ff0202';
     }
+
     if (counter >= 0) {
       count.textContent = counter;
       document.querySelectorAll('li').forEach((li) => {
@@ -117,6 +121,7 @@ export function countdown(data, currentQuestion) {
         });
       });
     }
+
     if (counter === 0) {
       showCorrectAnswer(data, currentQuestion);
       document.querySelectorAll('li').forEach((li) => {
@@ -129,10 +134,12 @@ export function countdown(data, currentQuestion) {
 }
 
 export function gameOver() {
-  quizCategory.style.display = 'none';
+  document.querySelector('.quiz').style.display = 'none';
+  count.style.display = 'none';
+  /* quizCategory.style.display = 'none';
   question.style.display = 'none';
   answersList.style.display = 'none';
-  count.style.display = 'none';
+  count.style.display = 'none'; */
   document.querySelector('.quiz__nextBtn').style.display = 'none';
   document.querySelector('.quiz').style.display = 'none';
   document.querySelector('.game-over').style.display = 'flex';
@@ -140,4 +147,12 @@ export function gameOver() {
 
 export function showPlayersScore() {
   document.querySelector('.game-over__score').textContent = points;
+}
+
+export function resetUi() {
+  document.querySelector('.game-over').style.display = 'none';
+  quizContainer.style.display = 'none';
+  containerCta.style.display = 'block';
+  glowSign.style.display = 'flex';
+  points = 0;
 }

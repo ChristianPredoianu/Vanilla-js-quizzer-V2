@@ -40,7 +40,7 @@ body {
 
   &__span {
     font-size: 6rem;
-    color: #b2b2b0;
+    color: #aaaaaa;
     animation: glow 0.08s ease-in-out infinite alternate;
   }
 }
@@ -291,7 +291,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
 
-    &__focus {
+    &:focus {
       outline: none;
     }
 
