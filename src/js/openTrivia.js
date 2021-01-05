@@ -6,7 +6,7 @@ export async function getCategories() {
 
 export async function getQuestions(options) {
   const response = await fetch(
-    `https://opentdb.com/api.php?amount=3&category=${options.id}&difficulty=${options.diff}&type=multiple`
+    `https://opentdb.com/api.php?amount=10&category=${options.id}&difficulty=${options.diff}&type=multiple`
   );
   const questions = await response.json();
   return questions;

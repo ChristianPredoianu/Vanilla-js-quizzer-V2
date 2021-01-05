@@ -10,6 +10,7 @@ const selectCategories = document.querySelector('#category'),
   answersList = document.querySelector('.quiz__list');
 
 let points = 0;
+let userHasAnswered = false;
 
 //Populate dropdown with categories from API
 export function populateDropdown(data) {
@@ -33,6 +34,7 @@ export function initGameUi() {
   quizContainer.style.display = 'flex';
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
+  count.style.display = 'flex';
   document.querySelector('.quiz').style.display = 'flex';
   document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
@@ -65,21 +67,24 @@ export function shuffleAnswers() {
 }
 
 export function checkIfCorrectAnswer(data, currentQuestion) {
-  console.log('current question' + currentQuestion);
   document.querySelectorAll('li').forEach((li) => {
     li.addEventListener('click', (e) => {
       if (
         e.target.textContent === data.results[currentQuestion].correct_answer
       ) {
+        console.log(e.target);
         e.target.classList.add('correct-answer');
         e.target.parentElement.classList.add('disabled');
         document.querySelector('.quiz__nextBtn').classList.remove('disabled');
         points++;
+        userHasAnswered = true;
       } else {
+        console.log(e.target);
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
         showCorrectAnswer(data, currentQuestion);
         document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+        userHasAnswered = true;
       }
     });
   });
@@ -104,22 +109,23 @@ export function removeQuestion() {
 }
 
 export function countdown(data, currentQuestion) {
-  let counter = 16;
+  userHasAnswered = false;
+  clearInterval(timer);
+  let counter = 15;
+  count.textContent = counter;
   count.style.color = '#02ff17';
   const timer = setInterval(() => {
     counter--;
 
-    if (counter <= 5) {
-      count.style.color = '#ff0202';
-    }
-
     if (counter >= 0) {
       count.textContent = counter;
-      document.querySelectorAll('li').forEach((li) => {
-        li.addEventListener('click', (e) => {
-          clearInterval(timer);
-        });
-      });
+      if (userHasAnswered) {
+        clearInterval(timer);
+      }
+    }
+
+    if (counter <= 5) {
+      count.style.color = '#ff0202';
     }
 
     if (counter === 0) {
@@ -129,6 +135,7 @@ export function countdown(data, currentQuestion) {
       });
       document.querySelector('.quiz__nextBtn').classList.remove('disabled');
       clearInterval(timer);
+      userHasAnswered = true;
     }
   }, 1000);
 }

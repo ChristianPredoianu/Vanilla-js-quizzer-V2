@@ -17,19 +17,15 @@ import {
 } from './ui';
 
 let currentQuestion = 0;
-let gameIsPlaying = false;
 
 function initGame() {
   getCategories().then((data) => {
     populateDropdown(data);
   });
   document.querySelector('.btn').addEventListener('click', () => {
-    gameIsPlaying = true;
     const selectedOptions = getCategoryAndDifficulty();
-
     initGameUi();
     getQuestions(selectedOptions).then((data) => {
-      console.log(data);
       playGame(data, currentQuestion);
       nextQuestion(data);
     });
@@ -49,7 +45,6 @@ function nextQuestion(data) {
         currentQuestion++;
         removeQuestion();
         playGame(data, currentQuestion);
-        console.log('data-length' + data.results.length);
       } else {
         gameOver();
         showPlayersScore();
@@ -59,13 +54,15 @@ function nextQuestion(data) {
 }
 
 function playGame(data, currentQuestion) {
-  countdown(data, currentQuestion);
+  setTimeout(() => {
+    countdown(data, currentQuestion);
+  }, 1000);
   setTimeout(() => {
     showQuestion(data, currentQuestion);
     showAnswers(data, currentQuestion);
     shuffleAnswers();
     checkIfCorrectAnswer(data, currentQuestion);
-  }, 1200);
+  }, 2000);
 }
 
 function resetGame() {

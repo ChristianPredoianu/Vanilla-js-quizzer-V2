@@ -998,7 +998,7 @@ function _getQuestions() {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return fetch("https://opentdb.com/api.php?amount=3&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple"));
+            return fetch("https://opentdb.com/api.php?amount=10&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple"));
 
           case 2:
             response = _context2.sent;
@@ -1046,7 +1046,8 @@ var selectCategories = document.querySelector('#category'),
     question = document.querySelector('.quiz__question'),
     count = document.querySelector('.countdown__count'),
     answersList = document.querySelector('.quiz__list');
-var points = 0; //Populate dropdown with categories from API
+var points = 0;
+var userHasAnswered = false; //Populate dropdown with categories from API
 
 function populateDropdown(data) {
   data.trivia_categories.forEach(function (category) {
@@ -1069,6 +1070,7 @@ function initGameUi() {
   quizContainer.style.display = 'flex';
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
+  count.style.display = 'flex';
   document.querySelector('.quiz').style.display = 'flex';
   document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
@@ -1100,19 +1102,22 @@ function shuffleAnswers() {
 }
 
 function checkIfCorrectAnswer(data, currentQuestion) {
-  console.log('current question' + currentQuestion);
   document.querySelectorAll('li').forEach(function (li) {
     li.addEventListener('click', function (e) {
       if (e.target.textContent === data.results[currentQuestion].correct_answer) {
+        console.log(e.target);
         e.target.classList.add('correct-answer');
         e.target.parentElement.classList.add('disabled');
         document.querySelector('.quiz__nextBtn').classList.remove('disabled');
         points++;
+        userHasAnswered = true;
       } else {
+        console.log(e.target);
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
         showCorrectAnswer(data, currentQuestion);
         document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+        userHasAnswered = true;
       }
     });
   });
@@ -1137,22 +1142,24 @@ function removeQuestion() {
 }
 
 function countdown(data, currentQuestion) {
-  var counter = 16;
+  userHasAnswered = false;
+  clearInterval(timer);
+  var counter = 15;
+  count.textContent = counter;
   count.style.color = '#02ff17';
   var timer = setInterval(function () {
     counter--;
 
-    if (counter <= 5) {
-      count.style.color = '#ff0202';
-    }
-
     if (counter >= 0) {
       count.textContent = counter;
-      document.querySelectorAll('li').forEach(function (li) {
-        li.addEventListener('click', function (e) {
-          clearInterval(timer);
-        });
-      });
+
+      if (userHasAnswered) {
+        clearInterval(timer);
+      }
+    }
+
+    if (counter <= 5) {
+      count.style.color = '#ff0202';
     }
 
     if (counter === 0) {
@@ -1162,6 +1169,7 @@ function countdown(data, currentQuestion) {
       });
       document.querySelector('.quiz__nextBtn').classList.remove('disabled');
       clearInterval(timer);
+      userHasAnswered = true;
     }
   }, 1000);
 }
@@ -1202,18 +1210,15 @@ var _openTrivia = require("./openTrivia");
 var _ui = require("./ui");
 
 var currentQuestion = 0;
-var gameIsPlaying = false;
 
 function initGame() {
   (0, _openTrivia.getCategories)().then(function (data) {
     (0, _ui.populateDropdown)(data);
   });
   document.querySelector('.btn').addEventListener('click', function () {
-    gameIsPlaying = true;
     var selectedOptions = (0, _ui.getCategoryAndDifficulty)();
     (0, _ui.initGameUi)();
     (0, _openTrivia.getQuestions)(selectedOptions).then(function (data) {
-      console.log(data);
       playGame(data, currentQuestion);
       nextQuestion(data);
     });
@@ -1233,7 +1238,6 @@ function nextQuestion(data) {
       currentQuestion++;
       (0, _ui.removeQuestion)();
       playGame(data, currentQuestion);
-      console.log('data-length' + data.results.length);
     } else {
       (0, _ui.gameOver)();
       (0, _ui.showPlayersScore)();
@@ -1243,13 +1247,15 @@ function nextQuestion(data) {
 }
 
 function playGame(data, currentQuestion) {
-  (0, _ui.countdown)(data, currentQuestion);
+  setTimeout(function () {
+    (0, _ui.countdown)(data, currentQuestion);
+  }, 1000);
   setTimeout(function () {
     (0, _ui.showQuestion)(data, currentQuestion);
     (0, _ui.showAnswers)(data, currentQuestion);
     (0, _ui.shuffleAnswers)();
     (0, _ui.checkIfCorrectAnswer)(data, currentQuestion);
-  }, 1200);
+  }, 2000);
 }
 
 function resetGame() {
@@ -1290,7 +1296,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51391" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53522" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
