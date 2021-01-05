@@ -1,3 +1,4 @@
+@import './_mixins.scss';
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 
 //Reset
@@ -38,6 +39,12 @@ body {
   justify-content: center;
   align-items: center;
 
+  @include respond(phone) {
+    top: 2%;
+    left: 50%;
+    transform: translate(-50%, -2%);
+  }
+
   &__span {
     font-size: 6rem;
     color: #aaaaaa;
@@ -50,6 +57,10 @@ body {
   top: 30%;
   right: 50%;
   transform: translate(50%, -30%);
+
+  @include respond(phone) {
+    top: 55%;
+  }
 }
 
 .form {
@@ -62,6 +73,12 @@ body {
     font-weight: bolder;
     color: white;
     text-align: start;
+
+    @include respond(phone) {
+      font-size: 1.8rem;
+      font-weight: normal;
+      text-align: center;
+    }
   }
 
   &__select {
@@ -84,6 +101,10 @@ body {
     background-position: right 0.7em top 50%, 0 0;
     background-size: 0.65rem auto, 100%;
 
+    @include respond(phone) {
+      font-size: 1.4rem;
+    }
+
     &:focus {
       box-shadow: 0 0 0 0.1rem;
       color: rgb(0, 0, 0);
@@ -101,6 +122,11 @@ body {
   text-transform: uppercase;
   transition: all 0.2s ease;
   cursor: pointer;
+
+  @include respond(phone) {
+    font-size: 2rem;
+    padding: 2rem 1rem;
+  }
 
   &:hover {
     transform: translateY(0.2rem);
@@ -128,6 +154,11 @@ body {
   margin-top: 5rem;
   border-radius: 2rem;
   background-color: rgba(255, 255, 255, 0.8);
+
+  @include respond(phone) {
+    width: 90%;
+    margin-bottom: 10rem;
+  }
 }
 
 .quiz {
@@ -135,6 +166,14 @@ body {
   flex-direction: column;
   width: 80%;
   padding: 2rem 0;
+
+  &__current-question {
+    display: none;
+    text-align: center;
+    font-size: 1.8rem;
+    color: #000000;
+    font-weight: bold;
+  }
 
   &__category {
     font-size: 3rem;
@@ -147,6 +186,10 @@ body {
     font-size: 3rem;
     padding: 1rem 2rem 3rem 2rem;
     text-align: center;
+
+    @include respond(phone) {
+      font-size: 1.8rem;
+    }
   }
 
   &__loader {
@@ -221,6 +264,7 @@ body {
 
   &__list-item {
     font-size: 2rem;
+    font-weight: bold;
     list-style: none;
     background-color: #fff;
     margin-top: 1rem;
@@ -228,6 +272,10 @@ body {
     text-align: center;
     border-radius: 2rem;
     cursor: pointer;
+
+    @include respond(phone) {
+      font-size: 1.6rem;
+    }
   }
 
   &__nextBtn {
@@ -243,6 +291,12 @@ body {
     border-radius: 2rem;
     border: none;
     cursor: pointer;
+
+    @include respond(phone) {
+      width: 100%;
+      font-size: 1.8rem;
+      letter-spacing: 0.2rem;
+    }
 
     &:focus {
       outline: none;
@@ -277,7 +331,13 @@ body {
   &__score {
     font-size: 4rem;
     margin-top: 2rem;
-    color: rgb(13, 39, 99);
+    color: #0d2763;
+    padding: 0 2rem;
+
+    @include respond(phone) {
+      font-size: 2rem;
+      text-align: center;
+    }
   }
 
   &__btn {
@@ -288,8 +348,16 @@ body {
     margin-top: 4rem;
     border: none;
     border-radius: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4rem;
     cursor: pointer;
     transition: all 0.2s ease;
+
+    @include respond(phone) {
+      font-size: 1.5rem;
+      letter-spacing: 0.2rem;
+      padding: 2rem 3rem;
+    }
 
     &:focus {
       outline: none;

@@ -953,9 +953,11 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//Fetch categories from API
 function getCategories() {
   return _getCategories.apply(this, arguments);
-}
+} //Fetch quiz with user selected options
+
 
 function _getCategories() {
   _getCategories = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
@@ -998,7 +1000,7 @@ function _getQuestions() {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return fetch("https://opentdb.com/api.php?amount=10&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple"));
+            return fetch("https://opentdb.com/api.php?amount=2&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple&encode=base64"));
 
           case 2:
             response = _context2.sent;
@@ -1041,6 +1043,7 @@ var selectCategories = document.querySelector('#category'),
     containerCta = document.querySelector('.container-cta'),
     glowSign = document.querySelector('.glow-sign'),
     quizContainer = document.querySelector('.container-quiz'),
+    quizCurrentQuestion = document.querySelector('.quiz__current-question'),
     quizCategory = document.querySelector('.quiz__category'),
     loader = document.querySelector('.quiz__loader'),
     question = document.querySelector('.quiz__question'),
@@ -1064,7 +1067,8 @@ function getCategoryAndDifficulty() {
     id: selectCategories.value,
     diff: selectDifficulty.value
   };
-}
+} //Init game UI
+
 
 function initGameUi() {
   quizContainer.style.display = 'flex';
@@ -1073,46 +1077,50 @@ function initGameUi() {
   count.style.display = 'flex';
   document.querySelector('.quiz').style.display = 'flex';
   document.querySelector('.quiz__nextBtn').style.display = 'none';
-}
+} //Show the current question
+
 
 function showQuestion(data, currentQuestion) {
   loader.style.display = 'none';
   document.querySelector('.quiz__nextBtn').style.display = 'block';
+  quizCurrentQuestion.style.display = 'block';
+  quizCurrentQuestion.textContent = "Question ".concat(currentQuestion + 1, " / 10");
   quizCategory.textContent = selectCategories.options[selectCategories.selectedIndex].text;
-  question.textContent = data.results[currentQuestion].question;
-}
+  question.textContent = atob(data.results[currentQuestion].question);
+} //Show the current answers for the curent question
+
 
 function showAnswers(data, currentQuestion) {
   var answer = document.createElement('li');
   answer.classList.add('quiz__list-item');
   answersList.appendChild(answer);
-  answer.textContent = data.results[currentQuestion].correct_answer;
+  answer.textContent = atob(data.results[currentQuestion].correct_answer);
   data.results[currentQuestion].incorrect_answers.forEach(function (incorrAnswer) {
     var incorrectAnswer = document.createElement('li');
     incorrectAnswer.classList.add('quiz__list-item');
     answersList.appendChild(incorrectAnswer);
-    incorrectAnswer.textContent = incorrAnswer;
+    incorrectAnswer.textContent = atob(incorrAnswer);
   });
-}
+} //Shuffle the position of the lis
+
 
 function shuffleAnswers() {
   for (var i = answersList.children.length; i >= 0; i--) {
     answersList.appendChild(answersList.children[Math.random() * i | 0]);
   }
-}
+} //Check if the user answered correct or wrong. atob() to decode base64 encoding from opentrivia api
+
 
 function checkIfCorrectAnswer(data, currentQuestion) {
   document.querySelectorAll('li').forEach(function (li) {
     li.addEventListener('click', function (e) {
-      if (e.target.textContent === data.results[currentQuestion].correct_answer) {
-        console.log(e.target);
+      if (e.target.textContent === atob(data.results[currentQuestion].correct_answer)) {
         e.target.classList.add('correct-answer');
         e.target.parentElement.classList.add('disabled');
         document.querySelector('.quiz__nextBtn').classList.remove('disabled');
         points++;
         userHasAnswered = true;
       } else {
-        console.log(e.target);
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
         showCorrectAnswer(data, currentQuestion);
@@ -1121,25 +1129,29 @@ function checkIfCorrectAnswer(data, currentQuestion) {
       }
     });
   });
-}
+} //Show user the correct answer
+
 
 function showCorrectAnswer(data, currentQuestion) {
   document.querySelectorAll('li').forEach(function (li) {
-    if (li.textContent === data.results[currentQuestion].correct_answer) {
+    if (li.textContent === atob(data.results[currentQuestion].correct_answer)) {
       li.classList.add('correct-answer');
     }
   });
-}
+} //Remove the question and answers
+
 
 function removeQuestion() {
   loader.style.display = 'block';
+  quizCurrentQuestion.style.display = 'none';
   question.textContent = '';
   document.querySelectorAll('li').forEach(function (li) {
     li.remove();
   });
   answersList.classList.remove('disabled');
   document.querySelector('.quiz__nextBtn').style.display = 'none';
-}
+} //Countdown - 15s for user to answer - If time runs out show correct answer to user
+
 
 function countdown(data, currentQuestion) {
   userHasAnswered = false;
@@ -1172,30 +1184,31 @@ function countdown(data, currentQuestion) {
       userHasAnswered = true;
     }
   }, 1000);
-}
+} //Game over
+
 
 function gameOver() {
   document.querySelector('.quiz').style.display = 'none';
   count.style.display = 'none';
-  /* quizCategory.style.display = 'none';
-  question.style.display = 'none';
-  answersList.style.display = 'none';
-  count.style.display = 'none'; */
-
   document.querySelector('.quiz__nextBtn').style.display = 'none';
   document.querySelector('.quiz').style.display = 'none';
   document.querySelector('.game-over').style.display = 'flex';
-}
+} //Show the user it's score
+
 
 function showPlayersScore() {
-  document.querySelector('.game-over__score').textContent = points;
-}
+  document.querySelector('.game-over__score').textContent = "The game is over! Your score is: ".concat(points, " / 10");
+} //Reset the UI
+
 
 function resetUi() {
   document.querySelector('.game-over').style.display = 'none';
   quizContainer.style.display = 'none';
   containerCta.style.display = 'block';
   glowSign.style.display = 'flex';
+  count.textContent = '';
+  quizCurrentQuestion.textContent = '';
+  quizCategory.textContent = '';
   points = 0;
 }
 },{}],"js/main.js":[function(require,module,exports) {
@@ -1209,13 +1222,13 @@ var _openTrivia = require("./openTrivia");
 
 var _ui = require("./ui");
 
-var currentQuestion = 0;
+var currentQuestion = 0; //Init game
 
 function initGame() {
   (0, _openTrivia.getCategories)().then(function (data) {
     (0, _ui.populateDropdown)(data);
   });
-  document.querySelector('.btn').addEventListener('click', function () {
+  document.querySelector('.start-btn').addEventListener('click', function () {
     var selectedOptions = (0, _ui.getCategoryAndDifficulty)();
     (0, _ui.initGameUi)();
     (0, _openTrivia.getQuestions)(selectedOptions).then(function (data) {
@@ -1244,7 +1257,8 @@ function nextQuestion(data) {
       this.removeEventListener('click', handler);
     }
   });
-}
+} //Play game
+
 
 function playGame(data, currentQuestion) {
   setTimeout(function () {
@@ -1256,7 +1270,8 @@ function playGame(data, currentQuestion) {
     (0, _ui.shuffleAnswers)();
     (0, _ui.checkIfCorrectAnswer)(data, currentQuestion);
   }, 2000);
-}
+} //Reset game
+
 
 function resetGame() {
   document.querySelector('.game-over__btn').addEventListener('click', function () {

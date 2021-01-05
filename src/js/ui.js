@@ -3,6 +3,7 @@ const selectCategories = document.querySelector('#category'),
   containerCta = document.querySelector('.container-cta'),
   glowSign = document.querySelector('.glow-sign'),
   quizContainer = document.querySelector('.container-quiz'),
+  quizCurrentQuestion = document.querySelector('.quiz__current-question'),
   quizCategory = document.querySelector('.quiz__category'),
   loader = document.querySelector('.quiz__loader'),
   question = document.querySelector('.quiz__question'),
@@ -30,6 +31,7 @@ export function getCategoryAndDifficulty() {
   };
 }
 
+//Init game UI
 export function initGameUi() {
   quizContainer.style.display = 'flex';
   containerCta.style.display = 'none';
@@ -39,47 +41,52 @@ export function initGameUi() {
   document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
 
+//Show the current question
 export function showQuestion(data, currentQuestion) {
   loader.style.display = 'none';
   document.querySelector('.quiz__nextBtn').style.display = 'block';
+  quizCurrentQuestion.style.display = 'block';
+  quizCurrentQuestion.textContent = `Question ${currentQuestion + 1} / 10`;
   quizCategory.textContent =
     selectCategories.options[selectCategories.selectedIndex].text;
-  question.textContent = data.results[currentQuestion].question;
+  question.textContent = atob(data.results[currentQuestion].question);
 }
 
+//Show the current answers for the curent question
 export function showAnswers(data, currentQuestion) {
   const answer = document.createElement('li');
   answer.classList.add('quiz__list-item');
   answersList.appendChild(answer);
-  answer.textContent = data.results[currentQuestion].correct_answer;
+  answer.textContent = atob(data.results[currentQuestion].correct_answer);
   data.results[currentQuestion].incorrect_answers.forEach((incorrAnswer) => {
     const incorrectAnswer = document.createElement('li');
     incorrectAnswer.classList.add('quiz__list-item');
     answersList.appendChild(incorrectAnswer);
-    incorrectAnswer.textContent = incorrAnswer;
+    incorrectAnswer.textContent = atob(incorrAnswer);
   });
 }
 
+//Shuffle the position of the lis
 export function shuffleAnswers() {
   for (let i = answersList.children.length; i >= 0; i--) {
     answersList.appendChild(answersList.children[(Math.random() * i) | 0]);
   }
 }
 
+//Check if the user answered correct or wrong. atob() to decode base64 encoding from opentrivia api
 export function checkIfCorrectAnswer(data, currentQuestion) {
   document.querySelectorAll('li').forEach((li) => {
     li.addEventListener('click', (e) => {
       if (
-        e.target.textContent === data.results[currentQuestion].correct_answer
+        e.target.textContent ===
+        atob(data.results[currentQuestion].correct_answer)
       ) {
-        console.log(e.target);
         e.target.classList.add('correct-answer');
         e.target.parentElement.classList.add('disabled');
         document.querySelector('.quiz__nextBtn').classList.remove('disabled');
         points++;
         userHasAnswered = true;
       } else {
-        console.log(e.target);
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
         showCorrectAnswer(data, currentQuestion);
@@ -90,16 +97,19 @@ export function checkIfCorrectAnswer(data, currentQuestion) {
   });
 }
 
+//Show user the correct answer
 function showCorrectAnswer(data, currentQuestion) {
   document.querySelectorAll('li').forEach((li) => {
-    if (li.textContent === data.results[currentQuestion].correct_answer) {
+    if (li.textContent === atob(data.results[currentQuestion].correct_answer)) {
       li.classList.add('correct-answer');
     }
   });
 }
 
+//Remove the question and answers
 export function removeQuestion() {
   loader.style.display = 'block';
+  quizCurrentQuestion.style.display = 'none';
   question.textContent = '';
   document.querySelectorAll('li').forEach((li) => {
     li.remove();
@@ -108,6 +118,7 @@ export function removeQuestion() {
   document.querySelector('.quiz__nextBtn').style.display = 'none';
 }
 
+//Countdown - 15s for user to answer - If time runs out show correct answer to user
 export function countdown(data, currentQuestion) {
   userHasAnswered = false;
   clearInterval(timer);
@@ -140,26 +151,30 @@ export function countdown(data, currentQuestion) {
   }, 1000);
 }
 
+//Game over
 export function gameOver() {
   document.querySelector('.quiz').style.display = 'none';
   count.style.display = 'none';
-  /* quizCategory.style.display = 'none';
-  question.style.display = 'none';
-  answersList.style.display = 'none';
-  count.style.display = 'none'; */
   document.querySelector('.quiz__nextBtn').style.display = 'none';
   document.querySelector('.quiz').style.display = 'none';
   document.querySelector('.game-over').style.display = 'flex';
 }
 
+//Show the user it's score
 export function showPlayersScore() {
-  document.querySelector('.game-over__score').textContent = points;
+  document.querySelector(
+    '.game-over__score'
+  ).textContent = `The game is over! Your score is: ${points} / 10`;
 }
 
+//Reset the UI
 export function resetUi() {
   document.querySelector('.game-over').style.display = 'none';
   quizContainer.style.display = 'none';
   containerCta.style.display = 'block';
   glowSign.style.display = 'flex';
+  count.textContent = '';
+  quizCurrentQuestion.textContent = '';
+  quizCategory.textContent = '';
   points = 0;
 }

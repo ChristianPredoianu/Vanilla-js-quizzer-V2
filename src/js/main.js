@@ -18,11 +18,12 @@ import {
 
 let currentQuestion = 0;
 
+//Init game
 function initGame() {
   getCategories().then((data) => {
     populateDropdown(data);
   });
-  document.querySelector('.btn').addEventListener('click', () => {
+  document.querySelector('.start-btn').addEventListener('click', () => {
     const selectedOptions = getCategoryAndDifficulty();
     initGameUi();
     getQuestions(selectedOptions).then((data) => {
@@ -53,6 +54,7 @@ function nextQuestion(data) {
     });
 }
 
+//Play game
 function playGame(data, currentQuestion) {
   setTimeout(() => {
     countdown(data, currentQuestion);
@@ -65,6 +67,7 @@ function playGame(data, currentQuestion) {
   }, 2000);
 }
 
+//Reset game
 function resetGame() {
   document.querySelector('.game-over__btn').addEventListener('click', () => {
     currentQuestion = 0;
