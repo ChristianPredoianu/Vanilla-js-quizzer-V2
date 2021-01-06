@@ -1,14 +1,17 @@
-const selectCategories = document.querySelector('#category'),
-  selectDifficulty = document.querySelector('#difficulty'),
-  containerCta = document.querySelector('.container-cta'),
+const count = document.querySelector('.countdown__count'),
   glowSign = document.querySelector('.glow-sign'),
+  containerCta = document.querySelector('.container-cta'),
+  selectCategories = document.querySelector('#category'),
+  selectDifficulty = document.querySelector('#difficulty'),
   quizContainer = document.querySelector('.container-quiz'),
+  quiz = document.querySelector('.quiz'),
   quizCurrentQuestion = document.querySelector('.quiz__current-question'),
   quizCategory = document.querySelector('.quiz__category'),
-  loader = document.querySelector('.quiz__loader'),
   question = document.querySelector('.quiz__question'),
-  count = document.querySelector('.countdown__count'),
-  answersList = document.querySelector('.quiz__list');
+  loader = document.querySelector('.quiz__loader'),
+  answersList = document.querySelector('.quiz__list'),
+  nextBtn = document.querySelector('.quiz__nextBtn'),
+  gameOverDiv = document.querySelector('.game-over');
 
 let points = 0;
 let userHasAnswered = false;
@@ -37,14 +40,15 @@ export function initGameUi() {
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
   count.style.display = 'flex';
-  document.querySelector('.quiz').style.display = 'flex';
-  document.querySelector('.quiz__nextBtn').style.display = 'none';
+  quiz.style.display = 'flex';
+  nextBtn.style.display = 'none';
 }
 
 //Show the current question
 export function showQuestion(data, currentQuestion) {
   loader.style.display = 'none';
-  document.querySelector('.quiz__nextBtn').style.display = 'block';
+  count.style.display = 'block';
+  nextBtn.style.display = 'block';
   quizCurrentQuestion.style.display = 'block';
   quizCurrentQuestion.textContent = `Question ${currentQuestion + 1} / 10`;
   quizCategory.textContent =
@@ -90,7 +94,7 @@ export function checkIfCorrectAnswer(data, currentQuestion) {
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
         showCorrectAnswer(data, currentQuestion);
-        document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+        nextBtn.classList.remove('disabled');
         userHasAnswered = true;
       }
     });
@@ -115,15 +119,15 @@ export function removeQuestion() {
     li.remove();
   });
   answersList.classList.remove('disabled');
-  document.querySelector('.quiz__nextBtn').style.display = 'none';
+  count.style.display = 'none';
+  nextBtn.style.display = 'none';
 }
 
 //Countdown - 15s for user to answer - If time runs out show correct answer to user
 export function countdown(data, currentQuestion) {
   userHasAnswered = false;
   clearInterval(timer);
-  let counter = 15;
-  count.textContent = counter;
+  let counter = 16;
   count.style.color = '#02ff17';
   const timer = setInterval(() => {
     counter--;
@@ -144,7 +148,7 @@ export function countdown(data, currentQuestion) {
       document.querySelectorAll('li').forEach((li) => {
         li.classList.add('disabled');
       });
-      document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+      nextBtn.classList.remove('disabled');
       clearInterval(timer);
       userHasAnswered = true;
     }
@@ -153,11 +157,11 @@ export function countdown(data, currentQuestion) {
 
 //Game over
 export function gameOver() {
-  document.querySelector('.quiz').style.display = 'none';
+  quiz.style.display = 'none';
   count.style.display = 'none';
-  document.querySelector('.quiz__nextBtn').style.display = 'none';
-  document.querySelector('.quiz').style.display = 'none';
-  document.querySelector('.game-over').style.display = 'flex';
+  nextBtn.style.display = 'none';
+  quiz.style.display = 'none';
+  gameOverDiv.style.display = 'flex';
 }
 
 //Show the user it's score
@@ -169,7 +173,7 @@ export function showPlayersScore() {
 
 //Reset the UI
 export function resetUi() {
-  document.querySelector('.game-over').style.display = 'none';
+  gameOverDiv.style.display = 'none';
   quizContainer.style.display = 'none';
   containerCta.style.display = 'block';
   glowSign.style.display = 'flex';

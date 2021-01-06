@@ -1000,7 +1000,7 @@ function _getQuestions() {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return fetch("https://opentdb.com/api.php?amount=2&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple&encode=base64"));
+            return fetch("https://opentdb.com/api.php?amount=10&category=".concat(options.id, "&difficulty=").concat(options.diff, "&type=multiple&encode=base64"));
 
           case 2:
             response = _context2.sent;
@@ -1038,17 +1038,20 @@ exports.countdown = countdown;
 exports.gameOver = gameOver;
 exports.showPlayersScore = showPlayersScore;
 exports.resetUi = resetUi;
-var selectCategories = document.querySelector('#category'),
-    selectDifficulty = document.querySelector('#difficulty'),
-    containerCta = document.querySelector('.container-cta'),
+var count = document.querySelector('.countdown__count'),
     glowSign = document.querySelector('.glow-sign'),
+    containerCta = document.querySelector('.container-cta'),
+    selectCategories = document.querySelector('#category'),
+    selectDifficulty = document.querySelector('#difficulty'),
     quizContainer = document.querySelector('.container-quiz'),
+    quiz = document.querySelector('.quiz'),
     quizCurrentQuestion = document.querySelector('.quiz__current-question'),
     quizCategory = document.querySelector('.quiz__category'),
-    loader = document.querySelector('.quiz__loader'),
     question = document.querySelector('.quiz__question'),
-    count = document.querySelector('.countdown__count'),
-    answersList = document.querySelector('.quiz__list');
+    loader = document.querySelector('.quiz__loader'),
+    answersList = document.querySelector('.quiz__list'),
+    nextBtn = document.querySelector('.quiz__nextBtn'),
+    gameOverDiv = document.querySelector('.game-over');
 var points = 0;
 var userHasAnswered = false; //Populate dropdown with categories from API
 
@@ -1075,14 +1078,15 @@ function initGameUi() {
   containerCta.style.display = 'none';
   glowSign.style.display = 'none';
   count.style.display = 'flex';
-  document.querySelector('.quiz').style.display = 'flex';
-  document.querySelector('.quiz__nextBtn').style.display = 'none';
+  quiz.style.display = 'flex';
+  nextBtn.style.display = 'none';
 } //Show the current question
 
 
 function showQuestion(data, currentQuestion) {
   loader.style.display = 'none';
-  document.querySelector('.quiz__nextBtn').style.display = 'block';
+  count.style.display = 'block';
+  nextBtn.style.display = 'block';
   quizCurrentQuestion.style.display = 'block';
   quizCurrentQuestion.textContent = "Question ".concat(currentQuestion + 1, " / 10");
   quizCategory.textContent = selectCategories.options[selectCategories.selectedIndex].text;
@@ -1124,7 +1128,7 @@ function checkIfCorrectAnswer(data, currentQuestion) {
         e.target.classList.add('incorrect-answer');
         e.target.parentElement.classList.add('disabled');
         showCorrectAnswer(data, currentQuestion);
-        document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+        nextBtn.classList.remove('disabled');
         userHasAnswered = true;
       }
     });
@@ -1149,15 +1153,15 @@ function removeQuestion() {
     li.remove();
   });
   answersList.classList.remove('disabled');
-  document.querySelector('.quiz__nextBtn').style.display = 'none';
+  count.style.display = 'none';
+  nextBtn.style.display = 'none';
 } //Countdown - 15s for user to answer - If time runs out show correct answer to user
 
 
 function countdown(data, currentQuestion) {
   userHasAnswered = false;
   clearInterval(timer);
-  var counter = 15;
-  count.textContent = counter;
+  var counter = 16;
   count.style.color = '#02ff17';
   var timer = setInterval(function () {
     counter--;
@@ -1179,7 +1183,7 @@ function countdown(data, currentQuestion) {
       document.querySelectorAll('li').forEach(function (li) {
         li.classList.add('disabled');
       });
-      document.querySelector('.quiz__nextBtn').classList.remove('disabled');
+      nextBtn.classList.remove('disabled');
       clearInterval(timer);
       userHasAnswered = true;
     }
@@ -1188,11 +1192,11 @@ function countdown(data, currentQuestion) {
 
 
 function gameOver() {
-  document.querySelector('.quiz').style.display = 'none';
+  quiz.style.display = 'none';
   count.style.display = 'none';
-  document.querySelector('.quiz__nextBtn').style.display = 'none';
-  document.querySelector('.quiz').style.display = 'none';
-  document.querySelector('.game-over').style.display = 'flex';
+  nextBtn.style.display = 'none';
+  quiz.style.display = 'none';
+  gameOverDiv.style.display = 'flex';
 } //Show the user it's score
 
 
@@ -1202,7 +1206,7 @@ function showPlayersScore() {
 
 
 function resetUi() {
-  document.querySelector('.game-over').style.display = 'none';
+  gameOverDiv.style.display = 'none';
   quizContainer.style.display = 'none';
   containerCta.style.display = 'block';
   glowSign.style.display = 'flex';
@@ -1311,7 +1315,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53522" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63543" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

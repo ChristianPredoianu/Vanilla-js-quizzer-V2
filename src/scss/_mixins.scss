@@ -1,3 +1,26 @@
+@mixin flex-config(
+  $display: false,
+  $direction: false,
+  $justify: false,
+  $align: false
+) {
+  @if $display != false {
+    display: $display;
+  }
+
+  @if $justify != false {
+    justify-content: $justify;
+  }
+
+  @if $direction != false {
+    flex-direction: $direction;
+  }
+
+  @if $align != false {
+    align-items: $align;
+  }
+}
+
 // MEDIA QUERY MANAGER
 /*
 0-600px:      Phone
