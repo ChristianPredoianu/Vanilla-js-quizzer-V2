@@ -1029,6 +1029,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.populateDropdown = populateDropdown;
 exports.getCategoryAndDifficulty = getCategoryAndDifficulty;
 exports.initGameUi = initGameUi;
+exports.showErrorMsg = showErrorMsg;
+exports.hideErrorMsg = hideErrorMsg;
 exports.showQuestion = showQuestion;
 exports.showAnswers = showAnswers;
 exports.shuffleAnswers = shuffleAnswers;
@@ -1043,6 +1045,7 @@ var count = document.querySelector('.countdown__count'),
     containerCta = document.querySelector('.container-cta'),
     selectCategories = document.querySelector('#category'),
     selectDifficulty = document.querySelector('#difficulty'),
+    startBtn = document.querySelector('.error-msg'),
     quizContainer = document.querySelector('.container-quiz'),
     quiz = document.querySelector('.quiz'),
     quizCurrentQuestion = document.querySelector('.quiz__current-question'),
@@ -1052,8 +1055,8 @@ var count = document.querySelector('.countdown__count'),
     answersList = document.querySelector('.quiz__list'),
     nextBtn = document.querySelector('.quiz__nextBtn'),
     gameOverDiv = document.querySelector('.game-over');
-var points = 0;
-var userHasAnswered = false; //Populate dropdown with categories from API
+var points = 0,
+    userHasAnswered = false; //Populate dropdown with categories from API
 
 function populateDropdown(data) {
   data.trivia_categories.forEach(function (category) {
@@ -1080,6 +1083,17 @@ function initGameUi() {
   count.style.display = 'flex';
   quiz.style.display = 'flex';
   nextBtn.style.display = 'none';
+}
+
+function showErrorMsg() {
+  startBtn.style.display = 'block';
+  setTimeout(function () {
+    hideErrorMsg();
+  }, 2000);
+}
+
+function hideErrorMsg() {
+  startBtn.style.display = 'none';
 } //Show the current question
 
 
@@ -1138,9 +1152,7 @@ function checkIfCorrectAnswer(data, currentQuestion) {
 
 function showCorrectAnswer(data, currentQuestion) {
   document.querySelectorAll('li').forEach(function (li) {
-    if (li.textContent === atob(data.results[currentQuestion].correct_answer)) {
-      li.classList.add('correct-answer');
-    }
+    if (li.textContent === atob(data.results[currentQuestion].correct_answer)) li.classList.add('correct-answer');
   });
 } //Remove the question and answers
 
@@ -1174,9 +1186,7 @@ function countdown(data, currentQuestion) {
       }
     }
 
-    if (counter <= 5) {
-      count.style.color = '#ff0202';
-    }
+    if (counter <= 5) count.style.color = '#ff0202';
 
     if (counter === 0) {
       showCorrectAnswer(data, currentQuestion);
@@ -1224,22 +1234,48 @@ require("regenerator-runtime/runtime");
 
 var _openTrivia = require("./openTrivia");
 
-var _ui = require("./ui");
+var ui = _interopRequireWildcard(require("./ui"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 var currentQuestion = 0; //Init game
 
 function initGame() {
   (0, _openTrivia.getCategories)().then(function (data) {
-    (0, _ui.populateDropdown)(data);
+    ui.populateDropdown(data);
   });
+} //Start game
+
+
+function startGame() {
   document.querySelector('.start-btn').addEventListener('click', function () {
-    var selectedOptions = (0, _ui.getCategoryAndDifficulty)();
-    (0, _ui.initGameUi)();
+    var selectedOptions = ui.getCategoryAndDifficulty();
     (0, _openTrivia.getQuestions)(selectedOptions).then(function (data) {
-      playGame(data, currentQuestion);
-      nextQuestion(data);
+      //If no questions avaliable from API
+      if (data.response_code === 1) {
+        ui.showErrorMsg();
+      } else {
+        ui.initGameUi();
+        playGame(data, currentQuestion);
+        nextQuestion(data);
+      }
     });
   });
+} //Play game
+
+
+function playGame(data, currentQuestion) {
+  setTimeout(function () {
+    ui.countdown(data, currentQuestion);
+  }, 1000);
+  setTimeout(function () {
+    ui.showQuestion(data, currentQuestion);
+    ui.showAnswers(data, currentQuestion);
+    ui.shuffleAnswers();
+    ui.checkIfCorrectAnswer(data, currentQuestion);
+  }, 2000);
 }
 /* Next question -- Use function handler() on addEventListener instead of () => to have access to the this keyword 
 so that we can run the eventListener once (remove the eventListener when the game is over) -- otherwise it will run 
@@ -1253,39 +1289,27 @@ function nextQuestion(data) {
 
     if (data.results.length - 1 !== currentQuestion) {
       currentQuestion++;
-      (0, _ui.removeQuestion)();
+      ui.removeQuestion();
       playGame(data, currentQuestion);
     } else {
-      (0, _ui.gameOver)();
-      (0, _ui.showPlayersScore)();
+      ui.gameOver();
+      ui.showPlayersScore();
       this.removeEventListener('click', handler);
     }
   });
-} //Play game
-
-
-function playGame(data, currentQuestion) {
-  setTimeout(function () {
-    (0, _ui.countdown)(data, currentQuestion);
-  }, 1000);
-  setTimeout(function () {
-    (0, _ui.showQuestion)(data, currentQuestion);
-    (0, _ui.showAnswers)(data, currentQuestion);
-    (0, _ui.shuffleAnswers)();
-    (0, _ui.checkIfCorrectAnswer)(data, currentQuestion);
-  }, 2000);
 } //Reset game
 
 
 function resetGame() {
   document.querySelector('.game-over__btn').addEventListener('click', function () {
     currentQuestion = 0;
-    (0, _ui.removeQuestion)();
-    (0, _ui.resetUi)();
+    ui.removeQuestion();
+    ui.resetUi();
   });
 }
 
 initGame();
+startGame();
 resetGame();
 },{"./../scss/main.scss":"scss/main.scss","regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","./openTrivia":"js/openTrivia.js","./ui":"js/ui.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -1315,7 +1339,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63543" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64678" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

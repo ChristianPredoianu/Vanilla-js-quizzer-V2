@@ -50,7 +50,9 @@ body {
   position: absolute;
   top: 30%;
   right: 50%;
+  height: 40vh;
   transform: translate(50%, -30%);
+  padding: 2rem 0;
 
   @include respond(tab-land) {
     top: 40%;
@@ -132,6 +134,14 @@ body {
   }
 }
 
+.error-msg {
+  font-size: 1.2rem;
+  color: red;
+  text-align: center;
+  margin-top: 2rem;
+  display: none;
+}
+
 .countdown {
   padding-top: 5rem;
   font-size: 7rem;
@@ -161,8 +171,6 @@ body {
 }
 
 .quiz {
-  /* display: flex;
-  flex-direction: column; */
   @include flex-config($display: flex, $direction: column);
   width: 80%;
   padding: 2rem 0;

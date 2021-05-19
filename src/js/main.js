@@ -1,36 +1,46 @@
 import './../scss/main.scss';
 import 'regenerator-runtime/runtime';
 import { getCategories, getQuestions } from './openTrivia';
-import {
-  populateDropdown,
-  getCategoryAndDifficulty,
-  showAnswers,
-  initGameUi,
-  countdown,
-  showQuestion,
-  shuffleAnswers,
-  checkIfCorrectAnswer,
-  removeQuestion,
-  gameOver,
-  showPlayersScore,
-  resetUi,
-} from './ui';
+import * as ui from './ui';
 
 let currentQuestion = 0;
 
 //Init game
 function initGame() {
   getCategories().then((data) => {
-    populateDropdown(data);
+    ui.populateDropdown(data);
   });
+}
+
+//Start game
+function startGame() {
   document.querySelector('.start-btn').addEventListener('click', () => {
-    const selectedOptions = getCategoryAndDifficulty();
-    initGameUi();
+    const selectedOptions = ui.getCategoryAndDifficulty();
+
     getQuestions(selectedOptions).then((data) => {
-      playGame(data, currentQuestion);
-      nextQuestion(data);
+      //If no questions avaliable from API
+      if (data.response_code === 1) {
+        ui.showErrorMsg();
+      } else {
+        ui.initGameUi();
+        playGame(data, currentQuestion);
+        nextQuestion(data);
+      }
     });
   });
+}
+
+//Play game
+function playGame(data, currentQuestion) {
+  setTimeout(() => {
+    ui.countdown(data, currentQuestion);
+  }, 1000);
+  setTimeout(() => {
+    ui.showQuestion(data, currentQuestion);
+    ui.showAnswers(data, currentQuestion);
+    ui.shuffleAnswers();
+    ui.checkIfCorrectAnswer(data, currentQuestion);
+  }, 2000);
 }
 
 /* Next question -- Use function handler() on addEventListener instead of () => to have access to the this keyword 
@@ -44,37 +54,25 @@ function nextQuestion(data) {
       document.querySelector('.quiz__nextBtn').classList.add('disabled');
       if (data.results.length - 1 !== currentQuestion) {
         currentQuestion++;
-        removeQuestion();
+        ui.removeQuestion();
         playGame(data, currentQuestion);
       } else {
-        gameOver();
-        showPlayersScore();
+        ui.gameOver();
+        ui.showPlayersScore();
         this.removeEventListener('click', handler);
       }
     });
-}
-
-//Play game
-function playGame(data, currentQuestion) {
-  setTimeout(() => {
-    countdown(data, currentQuestion);
-  }, 1000);
-  setTimeout(() => {
-    showQuestion(data, currentQuestion);
-    showAnswers(data, currentQuestion);
-    shuffleAnswers();
-    checkIfCorrectAnswer(data, currentQuestion);
-  }, 2000);
 }
 
 //Reset game
 function resetGame() {
   document.querySelector('.game-over__btn').addEventListener('click', () => {
     currentQuestion = 0;
-    removeQuestion();
-    resetUi();
+    ui.removeQuestion();
+    ui.resetUi();
   });
 }
 
 initGame();
+startGame();
 resetGame();

@@ -3,6 +3,7 @@ const count = document.querySelector('.countdown__count'),
   containerCta = document.querySelector('.container-cta'),
   selectCategories = document.querySelector('#category'),
   selectDifficulty = document.querySelector('#difficulty'),
+  startBtn = document.querySelector('.error-msg'),
   quizContainer = document.querySelector('.container-quiz'),
   quiz = document.querySelector('.quiz'),
   quizCurrentQuestion = document.querySelector('.quiz__current-question'),
@@ -13,8 +14,8 @@ const count = document.querySelector('.countdown__count'),
   nextBtn = document.querySelector('.quiz__nextBtn'),
   gameOverDiv = document.querySelector('.game-over');
 
-let points = 0;
-let userHasAnswered = false;
+let points = 0,
+  userHasAnswered = false;
 
 //Populate dropdown with categories from API
 export function populateDropdown(data) {
@@ -42,6 +43,17 @@ export function initGameUi() {
   count.style.display = 'flex';
   quiz.style.display = 'flex';
   nextBtn.style.display = 'none';
+}
+
+export function showErrorMsg() {
+  startBtn.style.display = 'block';
+  setTimeout(() => {
+    hideErrorMsg();
+  }, 2000);
+}
+
+export function hideErrorMsg() {
+  startBtn.style.display = 'none';
 }
 
 //Show the current question
@@ -104,9 +116,8 @@ export function checkIfCorrectAnswer(data, currentQuestion) {
 //Show user the correct answer
 function showCorrectAnswer(data, currentQuestion) {
   document.querySelectorAll('li').forEach((li) => {
-    if (li.textContent === atob(data.results[currentQuestion].correct_answer)) {
+    if (li.textContent === atob(data.results[currentQuestion].correct_answer))
       li.classList.add('correct-answer');
-    }
   });
 }
 
@@ -139,9 +150,7 @@ export function countdown(data, currentQuestion) {
       }
     }
 
-    if (counter <= 5) {
-      count.style.color = '#ff0202';
-    }
+    if (counter <= 5) count.style.color = '#ff0202';
 
     if (counter === 0) {
       showCorrectAnswer(data, currentQuestion);
