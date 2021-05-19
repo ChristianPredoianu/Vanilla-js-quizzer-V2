@@ -2,21 +2,21 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/ChristianPredoianu/covid-trackerV2/">
+  <a href="https://github.com/ChristianPredoianu/Vanilla-js-quizzer-V2">
     <img src="src/images/wall.jpg" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Covid tracker V2</h3>
+  <h3 align="center">Quizzer V2 V2</h3>
 
   <p align="center">
-   A Covid tracker to track world stats. Made with Vanilla.js (classes) 
+   A quiz game with different categories and difficulties. Made with Vanilla.js (classes) 
     <br />
-    <a href="https://github.com/ChristianPredoianu/covid-trackerV2/"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/ChristianPredoianu/Vanilla-js-quizzer-V2"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://covid19trackerv2.netlify.app//">View Demo</a>
+    <a href="https://quizzerv2.netlify.app/">View Demo</a>
     ·
-    <a href="https://github.com/ChristianPredoianu/covid-trackerV2/issues">Report Bug</a>
+    <a href="https://github.com/ChristianPredoianu/Vanilla-js-quizzer-V2/issues">Report Bug</a>
     ·
    
   </p>
@@ -53,12 +53,12 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project is made to show world stats about Covid-19.
+This project is vanilla JavaScript quiz.
 
 ### Built With
 
 * [Vanilla JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-* [Webpack](https://webpack.js.org/)
+* [Parcel](https://parceljs.org/)
 * [Html5](https://developer.mozilla.org/en-US/docs/Web/HTML)
 * [Css3](https://www.w3.org/Style/CSS/Overview.en.html)
 * [Sass](https://sass-lang.com/)
@@ -81,7 +81,7 @@ To get a local copy up and running follow these simple steps.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/ChristianPredoianu/covid-trackerV2.git
+   git clone https://github.com/ChristianPredoianu/Vanilla-js-quizzer-V2.git
    ```
 2. Install NPM packages
    ```sh
@@ -90,11 +90,11 @@ To get a local copy up and running follow these simple steps.
    
 3. Run dev server
    ```sh
-   npm run start:dev
+   npm run dev
    ```
-4. Watch dev server
+4. Build
    ```sh
-   npm run watch
+   npm run build
    ```
 
 
@@ -103,7 +103,7 @@ To get a local copy up and running follow these simple steps.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Search for a country, select prefered country and read the stats.
+Select a category and difficulty. Play the game. 
 
 
 
@@ -125,7 +125,7 @@ Project Link: [https://github.com/ChristianPredoianu/covid-trackerV2](https://gi
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
 
-* [Icons made by Freepik from www.flaticon.com](https://www.flaticon.com/authors/freepik)
+* [Open Trivia API](https://opentdb.com/api_config.php)
 
 
 
